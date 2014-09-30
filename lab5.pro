@@ -4,12 +4,8 @@ CONFIG -= app_bundle
 CONFIG -= qt
 CONFIG += c++11
 
-SOURCES += main.cpp \
-    list.cpp
+SOURCES += main.cpp
 
 HEADERS += \
-    list.h \
-    listnode.h \
-    listitr.h \
     speciallist.h
 
