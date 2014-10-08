@@ -1,21 +1,41 @@
-#ifndef SPECIALLIST_H
+﻿#ifndef SPECIALLIST_H
 #define SPECIALLIST_H
+
+#define USE_MYSTL 1
 
 #include <string>
 #include <iostream>
 #include <sstream>
-#include <map>
-#include <tuple>
-#include <vector>
-#include <forward_list>
 #include <algorithm>
 
-template <typename Name, typename Number, typename Compare = std::less<Name> >
+#if USE_MYSTL
+    #include "MYSTL/map.h"
+    #include "MYSTL/list.h"
+    using mystl::less;
+    using mystl::map;
+    using mystl::list;
+    using mystl::pair;
+    using mystl::four;
+#else
+    #include <map>
+    #include <list>
+    #include "MYSTL/utility.h"
+    using std::less;
+    using std::pair;
+    using std::map;
+    using std::list;
+    using mystl::four;
+#endif
+
+template <typename Name, typename Number, typename Compare = less<Name> >
 class SpecialList
 {
 public:
-    typedef typename std::tuple<Name, Number, long double, long double> tuple;
-    typedef typename std::map<Name, std::forward_list<Number>, Compare> map;
+    typedef four<Name, Number, long double, Number> special_four;
+    typedef pair<Name, Number> special_pair;
+
+    typedef list<Number> special_list;
+    typedef map<Name, special_list, Compare> special_map;
 
     class iterator
     {
@@ -27,7 +47,7 @@ public:
             mapIterator = other.mapIterator;
         }
 
-        iterator(const typename map::iterator &mIterator)
+        iterator(const typename special_map::iterator &mIterator)
         {
             mapIterator = mIterator;
         }
@@ -36,8 +56,8 @@ public:
 
         iterator& operator=(const iterator &other)
         {
-//            iterator(other);
-//            swap(tmp);
+            auto tmp = iterator(other);
+            swap(tmp);
             return *this;
         }
 
@@ -62,34 +82,36 @@ public:
             return *this;
         }
 
-        tuple operator*() const
+        special_four operator*() const
         {
             return prepareTuple();
         }
 
-        tuple* operator->() const
+        special_four* operator->() const
         {
             return &prepareTuple();
         }
 
     private:
-        tuple prepareTuple() const
+        special_four prepareTuple() const
         {
-            std::vector<int> numbers{ mapIterator->second.cbegin(), mapIterator->second.cend() };
-            std::sort(numbers.begin(), numbers.end());
+            mapIterator->second.sort();
+            auto count = mapIterator->second.size();
             Number sum = 0;
-            for(auto i = numbers.begin(); i != numbers.end(); i++)
-                sum += *i;
-            long double mean = (double)sum / numbers.size();
-            long double median;
-            if(numbers.size() % 2 == 0)
-                median = (numbers[numbers.size() / 2] + numbers[numbers.size() / 2 + 1]) / 2.0;
-            else
-                median = numbers[numbers.size() / 2];
-            return std::make_tuple(mapIterator->first, sum, mean, median);
+            int i = 0;
+            int middleIndex = (count % 2) ? count/2 : count/2 + 1;
+            Number median;
+            for(auto it = mapIterator->second.begin(); it != mapIterator->second.end(); it++, i++)
+            {
+                sum += *it;
+                if(i == middleIndex)
+                    median = *it;
+            }
+            long double mean = (double)sum / count;
+            return special_four(mapIterator->first, sum, mean, median);
         }
 
-        typename map::iterator mapIterator;
+        typename special_map::iterator mapIterator;
     };
 
     SpecialList() { }
@@ -136,13 +158,13 @@ public:
     }
 
     typename
-    map::size_type size()
+    special_map::size_type size()
     {
         return values.size();
     }
 
     typename
-    map::size_type max_size()
+    special_map::size_type max_size()
     {
         return values.max_size();
     }
@@ -153,10 +175,10 @@ public:
         return values.empty();
     }
 
-    SpecialList &operator<<(const std::pair<Name, Number> &pair)
+    SpecialList &operator<<(const special_pair &pair)
     {
         if(values.find(pair.first) == values.end())
-            values[pair.first] = std::forward_list<Number>(1, pair.second);
+            values[pair.first] = special_list(1, pair.second);
         else
             values[pair.first].push_front(pair.second);
         return *this;
@@ -167,7 +189,7 @@ public:
         Name name;
         Number number;
         stream >> name >> number;
-        specialList << std::make_pair(name, number);
+        specialList << special_pair(name, number);
         return stream;
     }
 
@@ -175,17 +197,17 @@ public:
     {
         for(auto const &i: specialList)
         {
-        stream << "name: " << std::get<0>(i)
-             << " total: " << std::get<1>(i)
-             << " mean: " << std::get<2>(i)
-             << " median: " << std::get<3>(i)
+        stream << "name: " << i.first
+             << " total: " << i.second
+             << " mean: " << i.third
+             << " median: " << i.fourth
              << std::endl;
         }
         return stream;
     }
 
 protected:
-     map values;
+     special_map values;
 };
 
 #endif // SPECIALLIST_H

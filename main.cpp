@@ -5,7 +5,7 @@ int main()
 {
     typedef std::string nameType;
     typedef int numberType;
-    typedef SpecialList<nameType, numberType, std::greater<nameType> > DataList;
+    typedef SpecialList<nameType, numberType, less<nameType> > DataList;
 
     DataList data;
     std::cout << "Enter name value pairs (blank to finish)" << std::endl;
