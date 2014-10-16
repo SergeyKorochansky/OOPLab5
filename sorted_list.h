@@ -10,7 +10,7 @@
 namespace mystl {
 
     template< typename Type, typename Compare = std::less<Type>, typename Allocator = std::allocator<Type> >
-    class sorted_list
+    class list
     {
     protected:
         class node_base
@@ -88,16 +88,16 @@ namespace mystl {
         typedef size_t                                  size_type;
 
 
-        explicit sorted_list(const Allocator &a = Allocator());
-        explicit sorted_list(size_type n, const Type &x = Type());
+        explicit list(const Allocator &a = Allocator());
+        explicit list(size_type n, const Type &x = Type());
 
         template <typename InputIterator>
-        sorted_list(InputIterator first, InputIterator last, const Allocator& a = Allocator());
+        list(InputIterator first, InputIterator last, const Allocator& a = Allocator());
 
-        sorted_list(const sorted_list &other);
-        ~sorted_list();
+        list(const list &other);
+        ~list();
 
-        sorted_list &operator= (const sorted_list& other);
+        list &operator= (const list& other);
 
         template <typename InputIterator>
         void assign(InputIterator first, InputIterator last);
@@ -138,11 +138,11 @@ namespace mystl {
 
         iterator erase(iterator pos);
         iterator erase(iterator first, iterator last);
-        void swap(sorted_list& other);
+        void swap(list& other);
         void clear() noexcept;
-        void splice(iterator pos, sorted_list& other);
-        void splice(iterator pos, sorted_list& other, iterator i);
-        void splice(iterator pos, sorted_list& other, iterator first, iterator last);
+        void splice(iterator pos, list& other);
+        void splice(iterator pos, list& other, iterator i);
+        void splice(iterator pos, list& other, iterator first, iterator last);
 
         void remove(const Type& x);
 
@@ -153,7 +153,7 @@ namespace mystl {
         template <typename BinaryPredicate>
         void unique(BinaryPredicate binary_pred);
 
-        void merge(sorted_list& other);
+        void merge(list& other);
 
     protected:
         node* _createNode(const Type& x);
@@ -171,16 +171,16 @@ namespace mystl {
         void __init_from_range(InputIterator first, InputIterator last, std::false_type);
 
         void __fill_init(size_type n, const Type &x);
-        void __checkAllocators(sorted_list &other);
+        void __checkAllocators(list &other);
 
         void __transfer(iterator _pos, iterator _first, iterator _last);
-        void __swap(sorted_list &other);
+        void __swap(list &other);
     };
 
     template <typename Type, typename Compare, typename Allocator>
-    bool operator== (sorted_list<Type, Compare, Allocator> &x, sorted_list<Type, Compare, Allocator> &y)
+    bool operator== (list<Type, Compare, Allocator> &x, list<Type, Compare, Allocator> &y)
     {
-        typedef typename sorted_list<Type, Compare, Allocator>::const_iterator const_iterator;
+        typedef typename list<Type, Compare, Allocator>::const_iterator const_iterator;
         const_iterator i1 = x.begin(), end1 = x.end();
         const_iterator i2 = y.begin(), end2 = y.end();
         while (i1 != end1 && i2 != end2 && *i1 == *i2)
@@ -192,37 +192,37 @@ namespace mystl {
     }
 
     template <typename Type, typename Compare, typename Allocator>
-    bool operator<(sorted_list<Type, Compare, Allocator> &x, sorted_list<Type, Compare, Allocator> &y)
+    bool operator<(list<Type, Compare, Allocator> &x, list<Type, Compare, Allocator> &y)
     {
         return std::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end());
     }
 
     template <typename Type, typename Compare, typename Allocator>
-    bool operator!=(sorted_list<Type, Compare, Allocator> &x, sorted_list<Type, Compare, Allocator> &y)
+    bool operator!=(list<Type, Compare, Allocator> &x, list<Type, Compare, Allocator> &y)
     {
         return !(x == y);
     }
 
     template <typename Type, typename Compare, typename Allocator>
-    bool operator>(sorted_list<Type, Compare, Allocator> &x, sorted_list<Type, Compare, Allocator> &y)
+    bool operator>(list<Type, Compare, Allocator> &x, list<Type, Compare, Allocator> &y)
     {
         return y < x;
     }
 
     template <typename Type, typename Compare, typename Allocator>
-    bool operator<=(sorted_list<Type, Compare, Allocator> &x, sorted_list<Type, Compare, Allocator> &y)
+    bool operator<=(list<Type, Compare, Allocator> &x, list<Type, Compare, Allocator> &y)
     {
         return !(y < x);
     }
 
     template <typename Type, typename Compare, typename Allocator>
-    bool operator>=(sorted_list<Type, Compare, Allocator> &x, sorted_list<Type, Compare, Allocator> &y)
+    bool operator>=(list<Type, Compare, Allocator> &x, list<Type, Compare, Allocator> &y)
     {
         return !(x < y);
     }
 
     template <typename Type, typename Compare, typename Allocator>
-    void swap(sorted_list<Type, Compare, Allocator> &x, sorted_list<Type, Compare, Allocator> &y)
+    void swap(list<Type, Compare, Allocator> &x, list<Type, Compare, Allocator> &y)
     {
         x.swap(y);
     }

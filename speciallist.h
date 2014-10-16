@@ -1,7 +1,7 @@
 ﻿#ifndef SPECIALLIST_H
 #define SPECIALLIST_H
 
-#define USE_MYSTL 1
+#define USE_MYSTL 0
 
 #include <string>
 #include <iostream>
@@ -13,7 +13,6 @@
 #if USE_MYSTL
     #include "map.h"
     #include "sorted_list.h"
-    using mystl::less;
     using mystl::map;
     using mystl::list;
     using mystl::pair;
@@ -21,9 +20,6 @@
 #else
     #include <map>
     #include <list>
-    #include "MYSTL/utility.h"
-    using std::less;
-    using std::pair;
     using std::map;
     using std::list;
     using std::pair;
