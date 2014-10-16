@@ -6,7 +6,9 @@ CONFIG += c++11
 
 SOURCES += main.cpp
 
-HEADERS += speciallist.h
+HEADERS += speciallist.h \
+    map.h \
+    sorted_list.h
 
 INCLUDEPATH += ../mystl/include
 LIBS += -L../mystl/build -lmystl
