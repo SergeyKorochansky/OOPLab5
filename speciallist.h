@@ -8,9 +8,11 @@
 #include <sstream>
 #include <algorithm>
 
+#include "utility.h"
+
 #if USE_MYSTL
     #include "map.h"
-    #include "MYSTL/list.h"
+    #include "sorted_list.h"
     using mystl::less;
     using mystl::map;
     using mystl::list;
@@ -24,18 +26,19 @@
     using std::pair;
     using std::map;
     using std::list;
+    using std::pair;
     using mystl::four;
 #endif
 
-template <typename Name, typename Number, typename Compare = less<Name> >
+template <typename Name, typename Number, typename Compare = std::less<Name> >
 class special_list
 {
 public:
     typedef four<Name, Number, long double, long double> special_four;
     typedef pair<Name, Number> special_pair;
 
-    typedef list<Number> special_list;
-    typedef map<Name, special_list, Compare> special_map;
+    typedef list<Number> integer_list;
+    typedef map<Name, integer_list, Compare> special_map;
 
     class iterator
     {
@@ -79,7 +82,9 @@ public:
     protected:
         special_four prepareTuple() const
         {
-            mapIterator->second.sort();
+            #ifndef USE_MYSTL
+                mapIterator->second.sort();
+            #endif
             auto count = mapIterator->second.size();
             Number sum = 0;
             int i = 0;
@@ -151,7 +156,7 @@ public:
     special_list &operator<<(const special_pair &pair)
     {
         if(values.find(pair.first) == values.end())
-            values[pair.first] = special_list(1, pair.second);
+            values[pair.first] = integer_list(1, pair.second);
         else
             values[pair.first].push_front(pair.second);
         return *this;

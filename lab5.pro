@@ -8,7 +8,5 @@ SOURCES += main.cpp
 
 HEADERS += speciallist.h \
     map.h \
-    sorted_list.h
-
-INCLUDEPATH += ../mystl/include
-LIBS += -L../mystl/build -lmystl
+    sorted_list.h \
+    utility.h
