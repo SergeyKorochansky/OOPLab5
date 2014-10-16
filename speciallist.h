@@ -16,15 +16,15 @@
     using mystl::map;
     using mystl::list;
     using mystl::pair;
-    using mystl::four;
 #else
     #include <map>
     #include <list>
     using std::map;
     using std::list;
     using std::pair;
-    using mystl::four;
 #endif
+
+using mystl::four;
 
 template <typename Name, typename Number, typename Compare = std::less<Name> >
 class special_list
