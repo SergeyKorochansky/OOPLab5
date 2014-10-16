@@ -83,10 +83,10 @@ public:
             #endif
             auto count = mapIterator->second.size();
             Number sum = 0;
-            int i = 0;
             bool isEven = ((count % 2) == 0);
-            int middleIndex = count/2;
+            unsigned int middleIndex = count / 2;
             long double median;
+            int i = 0;
             for (auto it = mapIterator->second.begin(); it != mapIterator->second.end(); it++, i++)
             {
                 sum += *it;
@@ -95,7 +95,7 @@ public:
                     if (isEven)
                     {
                         long double first = *it;
-                        long double second = *std::next(it);
+                        long double second = *std::prev(it);
                         median = (first + second) / 2;
                     }
                     else
@@ -154,7 +154,7 @@ public:
         if(values.find(pair.first) == values.end())
             values[pair.first] = integer_list(1, pair.second);
         else
-            values[pair.first].push_front(pair.second);
+            values[pair.first].push_back(pair.second);
         return *this;
     }
 
