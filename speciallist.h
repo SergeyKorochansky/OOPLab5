@@ -9,7 +9,7 @@
 #include <algorithm>
 
 #if USE_MYSTL
-    #include "MYSTL/map.h"
+    #include "map.h"
     #include "MYSTL/list.h"
     using mystl::less;
     using mystl::map;
@@ -28,10 +28,10 @@
 #endif
 
 template <typename Name, typename Number, typename Compare = less<Name> >
-class SpecialList
+class special_list
 {
 public:
-    typedef four<Name, Number, long double, Number> special_four;
+    typedef four<Name, Number, long double, long double> special_four;
     typedef pair<Name, Number> special_pair;
 
     typedef list<Number> special_list;
@@ -41,17 +41,8 @@ public:
     {
     public:
         iterator() {}
-
-        iterator(const iterator &other)
-        {
-            mapIterator = other.mapIterator;
-        }
-
-        iterator(const typename special_map::iterator &mIterator)
-        {
-            mapIterator = mIterator;
-        }
-
+        iterator(const iterator &other) : mapIterator(other.mapIterator) {}
+        iterator(const typename special_map::iterator &mIterator) : mapIterator(mIterator) {}
         ~iterator() {}
 
         iterator& operator=(const iterator &other)
@@ -62,13 +53,10 @@ public:
         }
 
         bool operator==(const iterator &other) const
-        {
-            return mapIterator == other.mapIterator;
-        }
+        { return mapIterator == other.mapIterator; }
+
         bool operator!=(const iterator &other) const
-        {
-            return mapIterator != other.mapIterator;
-        }
+        { return mapIterator != other.mapIterator; }
 
         iterator& operator++()
         {
@@ -83,29 +71,36 @@ public:
         }
 
         special_four operator*() const
-        {
-            return prepareTuple();
-        }
+        { return prepareTuple(); }
 
         special_four* operator->() const
-        {
-            return &prepareTuple();
-        }
+        { return &prepareTuple(); }
 
-    private:
+    protected:
         special_four prepareTuple() const
         {
             mapIterator->second.sort();
             auto count = mapIterator->second.size();
             Number sum = 0;
             int i = 0;
-            int middleIndex = (count % 2) ? count/2 : count/2 + 1;
-            Number median;
-            for(auto it = mapIterator->second.begin(); it != mapIterator->second.end(); it++, i++)
+            bool isEven = ((count % 2) == 0);
+            int middleIndex = count/2;
+            long double median;
+            for (auto it = mapIterator->second.begin(); it != mapIterator->second.end(); it++, i++)
             {
                 sum += *it;
-                if(i == middleIndex)
-                    median = *it;
+                if (i == middleIndex)
+                {
+                    if (isEven)
+                    {
+                        long double first = *it;
+                        long double second = *std::next(it);
+                        median = (first + second) / 2;
+                    }
+                    else
+                        median = *it;
+
+                }
             }
             long double mean = (double)sum / count;
             return special_four(mapIterator->first, sum, mean, median);
@@ -114,54 +109,35 @@ public:
         typename special_map::iterator mapIterator;
     };
 
-    SpecialList() { }
+    special_list() {}
+    special_list(const special_list &other) : values(other.values) {}
+    virtual ~special_list() {}
 
-    SpecialList(const SpecialList &other)
+    special_list& operator=(const special_list &other)
     {
-        values = other.values;
-    }
-
-    ~SpecialList()
-    {
-    }
-
-    SpecialList& operator=(const SpecialList &other)
-    {
-        SpecialList tmp(other);
+        special_list tmp(other);
         swap(tmp);
         return *this;
     }
 
-    bool operator==(const SpecialList &other) const
-    {
-        return values == other.values;
-    }
+    bool operator==(const special_list &other) const
+    { return values == other.values; }
 
-    bool operator!=(const SpecialList &other) const
-    {
-        return values != other.values;
-    }
+    bool operator!=(const special_list &other) const
+    { return values != other.values; }
 
     iterator begin()
-    {
-        return iterator(values.begin());
-    }
+    { return iterator(values.begin()); }
 
     iterator end()
-    {
-        return iterator(values.end());
-    }
+    { return iterator(values.end()); }
 
-    void swap(const SpecialList &swapped)
-    {
-        values.swap(swapped.values);
-    }
+    void swap(const special_list &swapped)
+    { values.swap(swapped.values); }
 
     typename
     special_map::size_type size()
-    {
-        return values.size();
-    }
+    { return values.size(); }
 
     typename
     special_map::size_type max_size()
@@ -170,12 +146,9 @@ public:
     }
 
     bool empty()
-    {
+    {  return values.empty(); }
 
-        return values.empty();
-    }
-
-    SpecialList &operator<<(const special_pair &pair)
+    special_list &operator<<(const special_pair &pair)
     {
         if(values.find(pair.first) == values.end())
             values[pair.first] = special_list(1, pair.second);
@@ -184,7 +157,7 @@ public:
         return *this;
     }
 
-    friend std::istream &operator>>(std::istream &stream, SpecialList &specialList)
+    friend std::istream &operator>>(std::istream &stream, special_list &specialList)
     {
         Name name;
         Number number;
@@ -193,7 +166,7 @@ public:
         return stream;
     }
 
-    friend std::ostream &operator<<(std::ostream &stream, SpecialList &specialList)
+    friend std::ostream &operator<<(std::ostream &stream, special_list &specialList)
     {
         for(auto const &i: specialList)
         {
